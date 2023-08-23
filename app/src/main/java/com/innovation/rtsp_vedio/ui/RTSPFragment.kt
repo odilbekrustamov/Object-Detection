@@ -1,6 +1,5 @@
 package com.innovation.rtsp_vedio.ui
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -23,7 +22,7 @@ import java.util.LinkedList
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class RTSPFragment : Fragment() , ObjectDetectorHelper.DetectorListener{
+class RTSPFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     private var _binding: FragmentRtspBinding? = null
     private val binding get() = _binding!!
 
@@ -31,11 +30,19 @@ class RTSPFragment : Fragment() , ObjectDetectorHelper.DetectorListener{
     private lateinit var mediaPlayer: MediaPlayer
 
     private lateinit var objectDetectorHelper: ObjectDetectorHelper
-    val url = "rtsp://admin:12345678a@45.9.229.134:6454/Streaming/Channels/101"
+    var url = ""
 
     private val saveIntervalSeconds = 1L
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadScheduledExecutor()
+
+    //private lateinit var retriever: FFmpegMediaMetadataRetriever
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        url = arguments?.getString("RTSPURL").toString()
+        Log.d("Sadfdasf", "onCreate: ${url}")
+        startCapturingFrames()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,46 +68,48 @@ class RTSPFragment : Fragment() , ObjectDetectorHelper.DetectorListener{
         )
 
         initBottomSheetControls()
-
-        startCapturingFrames()
     }
 
     private fun startCapturingFrames() {
         executor.scheduleWithFixedDelay({
             captureFrame()
-        }, 0, saveIntervalSeconds, TimeUnit.SECONDS)
+            Log.d("Sadfdasf", "error onCreate: dfgsgfdgfgm")
+        }, 0, 1L, TimeUnit.NANOSECONDS)
+
+        //retriever = FFmpegMediaMetadataRetriever()
+        //retriever.setDataSource(url)
+
+//        executor.execute {
+//            while (true) {
+//                try {
+//            captureFrame()
+//            Log.d("Sadfdasf", "error onCreate: dfgsgfdgfgm")
+//                    Thread.sleep(10)
+//                } catch (e: InterruptedException) {
+//                    e.printStackTrace()
+//                }
+//            }
+//        }
     }
 
     private fun captureFrame() {
         val retriever = FFmpegMediaMetadataRetriever()
         try {
             retriever.setDataSource(url)
-            val frame = retriever.getFrameAtTime(-1)
-            saveFrameToFile(frame)
+            //val frame = retriever.getFrameAtTime(-1)
+            val frame = retriever.frameAtTime
+            objectDetectorHelper.detect(frame, 0)
         } catch (e: Exception) {
             handler.post {
-                Toast.makeText(requireContext(), "Error capturing frame: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Error capturing frame: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } finally {
             retriever.release()
         }
-    }
-
-    private fun saveFrameToFile(frame: Bitmap) {
-        objectDetectorHelper.detect(frame, 0)
-//        val file = File(getExternalFilesDir(null), "${System.currentTimeMillis() % 1000}screenshot2.png")
-//        try {
-//            FileOutputStream(file).use { output ->
-//                frame.compress(Bitmap.CompressFormat.PNG, 100, output)
-//            }
-//            handler.post {
-//                Toast.makeText(this, "Frame saved", Toast.LENGTH_SHORT).show()
-//            }
-//        } catch (e: IOException) {
-//            handler.post {
-//                Toast.makeText(this, "Error saving frame: ${e.message}", Toast.LENGTH_SHORT).show()
-//            }
-//        }
     }
 
     override fun onStart() {
