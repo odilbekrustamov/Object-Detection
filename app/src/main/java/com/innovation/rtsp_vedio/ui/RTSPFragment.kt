@@ -32,11 +32,9 @@ class RTSPFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
     private lateinit var objectDetectorHelper: ObjectDetectorHelper
     var url = ""
 
-    private val saveIntervalSeconds = 1L
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadScheduledExecutor()
 
-    //private lateinit var retriever: FFmpegMediaMetadataRetriever
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         url = arguments?.getString("RTSPURL").toString()
@@ -75,21 +73,6 @@ class RTSPFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
             captureFrame()
             Log.d("Sadfdasf", "error onCreate: dfgsgfdgfgm")
         }, 0, 1L, TimeUnit.NANOSECONDS)
-
-        //retriever = FFmpegMediaMetadataRetriever()
-        //retriever.setDataSource(url)
-
-//        executor.execute {
-//            while (true) {
-//                try {
-//            captureFrame()
-//            Log.d("Sadfdasf", "error onCreate: dfgsgfdgfgm")
-//                    Thread.sleep(10)
-//                } catch (e: InterruptedException) {
-//                    e.printStackTrace()
-//                }
-//            }
-//        }
     }
 
     private fun captureFrame() {

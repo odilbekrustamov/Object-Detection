@@ -50,7 +50,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-   // implementation("org.videolan.android:libvlc-all:4.0.0-eap8")
     implementation("org.videolan.android:libvlc-all:3.3.0")
 
 
@@ -59,8 +58,6 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0")
     implementation("org.tensorflow:tensorflow-lite-gpu:2.9.0")
 
-//    implementation("com.github.wseemann:FFmpegMediaMetadataRetriever-core:1.0.19")
-//    implementation("com.github.wseemann:FFmpegMediaMetadataRetriever-native:1.0.19")
     implementation("com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14")
 
 }
